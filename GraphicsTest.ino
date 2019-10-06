@@ -39,7 +39,7 @@ as well as Adafruit raw 1.8" TFT display
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
 
-// For 1.44" and 1.8" TFT with ST7735 use
+// For 1.44" and 1.8" TFT with ST7735 use (also Geekcreit 0.96" 80x160)
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
 // For 1.54" TFT with ST7789
@@ -63,12 +63,18 @@ void setup(void) {
   // Use this initializer (uncomment) if you're using a 1.44" TFT
   tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
 
-  // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT
+  // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT (Use this instead, uncomment, for the Geekcreit 0.96" 80x160)
   //tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
 
   // Use this initializer (uncomment) if you're using a 1.54" 240x240 TFT
-//  tft.init(128, 128);   // initialize a ST7789 chip, 240x240 pixels
-
+  //  tft.init(128, 128);   // initialize a ST7789 chip, 240x240 pixels
+  
+  // tft.setRotation(3);  // comment out or 0, default protrait connector down for Geekcrreit .96 80x160.
+  //  0 right side up Portrait
+  //  1 upside down landscape,
+  //  2 upside down protrait,
+  //  3 right side up landscape.
+  
   Serial.println("Initialized");
 
   uint16_t time = millis();

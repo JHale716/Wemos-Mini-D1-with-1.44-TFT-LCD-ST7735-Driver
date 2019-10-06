@@ -1,5 +1,5 @@
 # Wemos-Mini-D1-with-1.44-TFT-LCD-ST7735-Driver
-Arduino code, and general documentation for the Wemos D1 Mini with a Generic 1.44 TFT LCD running the ST7735 Driver
+Arduino code, and general documentation for the Wemos D1 Mini with a Generic 1.44 TFT LCD running the ST7735 Driver. For those looking for resources on the Geekcreit 0.96" 80x160 TFT Display, this resourse posted by akasoggybunz was very useful
 
 ## Pinout
 

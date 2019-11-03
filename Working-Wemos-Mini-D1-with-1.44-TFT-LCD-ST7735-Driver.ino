@@ -1,13 +1,13 @@
 /***************************************************
   This is a library for the Adafruit 1.8" SPI display.
 
-This library works with the Adafruit 1.8" TFT Breakout w/SD card
+  This library works with the Adafruit 1.8" TFT Breakout w/SD card
   ----> http://www.adafruit.com/products/358
-The 1.8" TFT shield
+  The 1.8" TFT shield
   ----> https://www.adafruit.com/product/802
-The 1.44" TFT breakout
+  The 1.44" TFT breakout
   ----> https://www.adafruit.com/product/2088
-as well as Adafruit raw 1.8" TFT display
+  as well as Adafruit raw 1.8" TFT display
   ----> http://www.adafruit.com/products/618
 
   Check out the links above for our tutorials and wiring diagrams
@@ -31,7 +31,7 @@ as well as Adafruit raw 1.8" TFT display
 // These pins will also work for the 1.8" TFT shield
 #define TFT_CS     D1
 #define TFT_RST    D0  // you can also connect this to the Arduino reset
-                       // in which case, set this #define pin to -1!
+// in which case, set this #define pin to -1!
 #define TFT_DC     D2
 
 // Option 1 (recommended): must use the hardware SPI pins
@@ -39,11 +39,11 @@ as well as Adafruit raw 1.8" TFT display
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
 
-// For 1.44" and 1.8" TFT with ST7735 use
+// For 1.44" and 1.8" TFT with ST7735 use (Also for the .96" Geekcreit Module)
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
 // For 1.54" TFT with ST7789
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS,  TFT_DC, TFT_RST);
+//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // Option 2: use any pins but a little slower!
 //#define TFT_SCLK    // set these to be whatever pins you like!
@@ -58,16 +58,22 @@ void setup(void) {
   Serial.print("Hello! ST77xx TFT Test");
 
   // Use this initializer if you're using a 1.8" TFT
-  //tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
+  //  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
 
   // Use this initializer (uncomment) if you're using a 1.44" TFT
-  tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
+  //  tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
 
-  // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT
-  //tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
+  // Use this initializer (uncomment) if you're using a 0.96" 160x80 TFT
+  tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
 
   // Use this initializer (uncomment) if you're using a 1.54" 240x240 TFT
-//  tft.init(128, 128);   // initialize a ST7789 chip, 240x240 pixels
+  //  tft.init(128, 128);   // initialize a ST7789 chip, 240x240 pixels
+
+  tft.setRotation(3);  // comment out or 4 default protrait connector down for Geekcrreit .96 80x160.
+  //  1 Upside down landscape,
+  //  2 upside down protrait,
+  //  3 right side up landscape.
+  //  0 or 4 right side up landscape.
 
   Serial.println("Initialized");
 
@@ -88,7 +94,7 @@ void setup(void) {
   delay(4000);
 
   // a single pixel
-  tft.drawPixel(tft.width()/2, tft.height()/2, ST77XX_GREEN);
+  tft.drawPixel(tft.width() / 2, tft.height() / 2, ST77XX_GREEN);
   delay(500);
 
   // line draw test
@@ -116,11 +122,14 @@ void setup(void) {
   testtriangles();
   delay(500);
 
-  mediabuttons();
-  delay(500);
+//  mediabuttons();
+//  delay(500);
 
   Serial.println("done");
   delay(1000);
+
+  Serial.print("TFT Height: "); Serial.println(tft.height());
+  Serial.print("TFT Width: "); Serial.println(tft.width());
 }
 
 void loop() {
@@ -128,45 +137,54 @@ void loop() {
   delay(500);
   tft.invertDisplay(false);
   delay(500);
+  cornertocorner();
 }
+
+void cornertocorner() {
+  for (int16_t x = 0; x < tft.width(); x++) {
+    tft.writePixel(x, tft.height() - 1, ST7735_BLUE);
+    delay(0);
+  }
+}
+
 void testlines(uint16_t color) {
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=0; x < tft.width(); x+=6) {
-    tft.drawLine(0, 0, x, tft.height()-1, color);
+  for (int16_t x = 0; x < tft.width(); x += 6) {
+    tft.drawLine(0, 0, x, tft.height() - 1, color);
     delay(0);
   }
-  for (int16_t y=0; y < tft.height(); y+=6) {
-    tft.drawLine(0, 0, tft.width()-1, y, color);
-    delay(0);
-  }
-
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=0; x < tft.width(); x+=6) {
-    tft.drawLine(tft.width()-1, 0, x, tft.height()-1, color);
-    delay(0);
-  }
-  for (int16_t y=0; y < tft.height(); y+=6) {
-    tft.drawLine(tft.width()-1, 0, 0, y, color);
+  for (int16_t y = 0; y < tft.height(); y += 6) {
+    tft.drawLine(0, 0, tft.width() - 1, y, color);
     delay(0);
   }
 
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=0; x < tft.width(); x+=6) {
-    tft.drawLine(0, tft.height()-1, x, 0, color);
+  for (int16_t x = 0; x < tft.width(); x += 6) {
+    tft.drawLine(tft.width() - 1, 0, x, tft.height() - 1, color);
     delay(0);
   }
-  for (int16_t y=0; y < tft.height(); y+=6) {
-    tft.drawLine(0, tft.height()-1, tft.width()-1, y, color);
+  for (int16_t y = 0; y < tft.height(); y += 6) {
+    tft.drawLine(tft.width() - 1, 0, 0, y, color);
     delay(0);
   }
 
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=0; x < tft.width(); x+=6) {
-    tft.drawLine(tft.width()-1, tft.height()-1, x, 0, color);
+  for (int16_t x = 0; x < tft.width(); x += 6) {
+    tft.drawLine(0, tft.height() - 1, x, 0, color);
     delay(0);
   }
-  for (int16_t y=0; y < tft.height(); y+=6) {
-    tft.drawLine(tft.width()-1, tft.height()-1, 0, y, color);
+  for (int16_t y = 0; y < tft.height(); y += 6) {
+    tft.drawLine(0, tft.height() - 1, tft.width() - 1, y, color);
+    delay(0);
+  }
+
+  tft.fillScreen(ST77XX_BLACK);
+  for (int16_t x = 0; x < tft.width(); x += 6) {
+    tft.drawLine(tft.width() - 1, tft.height() - 1, x, 0, color);
+    delay(0);
+  }
+  for (int16_t y = 0; y < tft.height(); y += 6) {
+    tft.drawLine(tft.width() - 1, tft.height() - 1, 0, y, color);
     delay(0);
   }
 }
@@ -180,40 +198,40 @@ void testdrawtext(char *text, uint16_t color) {
 
 void testfastlines(uint16_t color1, uint16_t color2) {
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t y=0; y < tft.height(); y+=5) {
+  for (int16_t y = 0; y < tft.height(); y += 5) {
     tft.drawFastHLine(0, y, tft.width(), color1);
   }
-  for (int16_t x=0; x < tft.width(); x+=5) {
+  for (int16_t x = 0; x < tft.width(); x += 5) {
     tft.drawFastVLine(x, 0, tft.height(), color2);
   }
 }
 
 void testdrawrects(uint16_t color) {
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=0; x < tft.width(); x+=6) {
-    tft.drawRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color);
+  for (int16_t x = 0; x < tft.width(); x += 6) {
+    tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color);
   }
 }
 
 void testfillrects(uint16_t color1, uint16_t color2) {
   tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x=tft.width()-1; x > 6; x-=6) {
-    tft.fillRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color1);
-    tft.drawRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color2);
+  for (int16_t x = tft.width() - 1; x > 6; x -= 6) {
+    tft.fillRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color1);
+    tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color2);
   }
 }
 
 void testfillcircles(uint8_t radius, uint16_t color) {
-  for (int16_t x=radius; x < tft.width(); x+=radius*2) {
-    for (int16_t y=radius; y < tft.height(); y+=radius*2) {
+  for (int16_t x = radius; x < tft.width(); x += radius * 2) {
+    for (int16_t y = radius; y < tft.height(); y += radius * 2) {
       tft.fillCircle(x, y, radius, color);
     }
   }
 }
 
 void testdrawcircles(uint8_t radius, uint16_t color) {
-  for (int16_t x=0; x < tft.width()+radius; x+=radius*2) {
-    for (int16_t y=0; y < tft.height()+radius; y+=radius*2) {
+  for (int16_t x = 0; x < tft.width() + radius; x += radius * 2) {
+    for (int16_t y = 0; y < tft.height() + radius; y += radius * 2) {
       tft.drawCircle(x, y, radius, color);
     }
   }
@@ -223,16 +241,16 @@ void testtriangles() {
   tft.fillScreen(ST77XX_BLACK);
   int color = 0xF800;
   int t;
-  int w = tft.width()/2;
-  int x = tft.height()-1;
+  int w = tft.width() / 2;
+  int x = tft.height() - 1;
   int y = 0;
   int z = tft.width();
-  for(t = 0 ; t <= 15; t++) {
+  for (t = 0 ; t <= 15; t++) {
     tft.drawTriangle(w, y, y, x, z, x, color);
-    x-=4;
-    y+=4;
-    z-=4;
-    color+=100;
+    x -= 4;
+    y += 4;
+    z -= 4;
+    color += 100;
   }
 }
 
@@ -241,20 +259,20 @@ void testroundrects() {
   int color = 100;
   int i;
   int t;
-  for(t = 0 ; t <= 4; t+=1) {
+  for (t = 0 ; t <= 4; t += 1) {
     int x = 0;
     int y = 0;
-    int w = tft.width()-2;
-    int h = tft.height()-2;
-    for(i = 0 ; i <= 16; i+=1) {
+    int w = tft.width() - 2;
+    int h = tft.height() - 2;
+    for (i = 0 ; i <= 16; i += 1) {
       tft.drawRoundRect(x, y, w, h, 5, color);
-      x+=2;
-      y+=3;
-      w-=4;
-      h-=6;
-      color+=1100;
+      x += 2;
+      y += 3;
+      w -= 4;
+      h -= 6;
+      color += 1100;
     }
-    color+=100;
+    color += 100;
   }
 }
 
